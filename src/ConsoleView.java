@@ -1,15 +1,18 @@
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 /**
  * This class utilizes a Singleton pattern and is the entry point for program startup. Once instantiated, the class 
  * displays menu options to the user and allows the user to make a selection. The 
  * selection calls the appropriate functions on the controller and model.
  * 
- * @author David, Udo, and Ricky
+ * @author Udo, Ricky
  * 
  */
 public class ConsoleView
 {
 	private static ConsoleView console;
-	private static TheaterController controller = new TheaterController();
+	private static Theater controller = new Theater();
 	private InputUtils inputUtil = new InputUtils();
 
 	/**
@@ -19,12 +22,12 @@ public class ConsoleView
 	 */
 	private ConsoleView()
 	{
-		controller = new TheaterController();
+		controller = new Theater();
 		
 		if(inputUtil.promptYesOrNo(Strings.PROMPT_LOAD_DATA))
 		{
 			System.out.println(Strings.NOTIFY_RETRIEVING_DATA);
-			controller.retrieveData();
+			//controller.retrieveData();
 		}
 	}
 
@@ -116,7 +119,19 @@ public class ConsoleView
 	 */
 	private void addShow()
 	{
+		System.out.println("Please provide the client id, the show name, and the begin and end dates.");
+		Long id = inputUtil.getLongInput();
+		String showName = inputUtil.getStringInput();
+		int[] beginDate = inputUtil.getDateInput(inputUtil.getStringInput());
+		int[] endDate = inputUtil.getDateInput(inputUtil.getStringInput());
+	
+		Calendar begin = new GregorianCalendar(beginDate[0], beginDate[1], beginDate[2]);
+		Calendar end = new GregorianCalendar(endDate[0], endDate[1], endDate[2]);
+	
+		Show show = new Show(showName, begin, end);
 		
+		controller.getShows().add(id, show);
+		System.out.println(controller.getShows().getClientShow(id, showName).getName() + "successfully added");
 	}
 	
 	/**
@@ -180,7 +195,26 @@ public class ConsoleView
 	 */
 	private void addClient()
 	{
+		String name;
+		String address;
+		String phoneNumber;
 		
+		System.out.println("Please enter the Client's name, address, and phone number.");
+		
+		name = inputUtil.getStringInput();
+		address = inputUtil.getStringInput();
+		phoneNumber = inputUtil.getPhoneNumberInput();
+		
+		System.out.println("Name = " + name);
+		System.out.println("Address = " + address);
+		System.out.println("PhoneNumber = " + phoneNumber);
+
+		//Add a confirmation eventually.
+		
+		Client client = new Client(name, address, phoneNumber);
+		controller.getClients().add(client);
+		System.out.println("Successfully added client: " + controller.getClients().get(client.getID()).getName()
+					+ "With id of" + client.getID());
 	}
 	
 	/**
@@ -228,4 +262,5 @@ public class ConsoleView
 	{
 		ConsoleView.instance().guiHomePage();
 	}
+	
 }

@@ -9,7 +9,7 @@ import java.util.Scanner;
  * to make sure proper input is used. (EG - Asking for int and receiving a 
  * character instead)
  * 
- * @author David, Udo, Ricky
+ * @author Udo, Ricky
  *
  */
 public class InputUtils
@@ -75,10 +75,17 @@ public class InputUtils
 	 * Retrieves long input from user
 	 * @return long input, or -1 if there is an exception
 	 */
+	/*
 	public long getLongInput() throws NumberFormatException
 	{
 		String input = scanner.nextLine();
 		return Long.parseLong(input);
+	}
+	*/
+	public Long getLongInput() throws NumberFormatException
+	{
+		String input = scanner.nextLine();
+		return new Long(input);
 	}
 
 	/**
