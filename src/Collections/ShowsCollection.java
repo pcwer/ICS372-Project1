@@ -1,16 +1,26 @@
+package Collections;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ShowsCollection
+import Entities.Show;
+import Utils.DateUtils;
+
+public class ShowsCollection implements Serializable
 {
 	private Map<Long, ArrayList<Show>> shows;
 	
 	public ShowsCollection()
 	{
 		shows = new HashMap<Long, ArrayList<Show>>();
+	}
+	
+	public Map<Long, ArrayList<Show>> getShowsHashmap()
+	{
+		return shows;
 	}
 
 	public boolean add(Long key, Show newShow)
@@ -28,7 +38,7 @@ public class ShowsCollection
 		return false;
 	}
 	
-	public ArrayList<Show> getClientArrayListOfShows(Long key, String showName)
+	public ArrayList<Show> getClientArrayListOfShows(Long key)
 	{
 		return shows.get(key);
 	}

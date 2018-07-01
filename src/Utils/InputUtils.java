@@ -1,7 +1,10 @@
+package Utils;
 
 
 import java.io.IOException;
 import java.util.Scanner;
+
+import Enums.Command;
 
 
 /**
@@ -136,7 +139,7 @@ public class InputUtils
 	}
 
 	/**
-	 * Retrives string input and ensures there is a valid input
+	 * Rtrives string input and ensures there is a valid input
 	 * @return the string input
 	 * 
 	 */

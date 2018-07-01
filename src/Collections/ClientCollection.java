@@ -1,11 +1,15 @@
+package Collections;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientCollection
+import Entities.Client;
+
+public class ClientCollection implements Serializable
 {
 	private Map<Long, Client> clients;
 
-	ClientCollection()
+	public ClientCollection()
 	{
 		clients = new HashMap<Long, Client>();
 	}
@@ -19,5 +23,10 @@ public class ClientCollection
 	public Client get(Long key)
 	{
 		return clients.get(key);
+	}
+
+	public Map<Long, Client> getClientsHashMap()
+	{
+		return clients;
 	}
 }

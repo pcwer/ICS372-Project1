@@ -1,3 +1,4 @@
+package Api;
 
 public interface CommandsApi
 {

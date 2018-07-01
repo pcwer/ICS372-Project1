@@ -1,3 +1,4 @@
+package Utils;
 
 public class Strings
 {
@@ -31,5 +32,13 @@ public class Strings
 	public static final String STORE_DATA = "%d - Store Data\n";
 	public static final String RETRIEVE_DATA = "%d - Retrieve Data\n";
 	public static final String HELP = "%d - Help\n";
+
+	public static final String ERROR_NO_DATA_TO_RETRIEVE = "No data to retrieve. You must attempt to retrieve this information"
+			+ "													beore any other commands or the data will be overwritten.\n";
+
+	public static final String NOTIFY_DATA_LOADING = "Data found and loading...\n";
+
+	public static final String ERROR_DATA_NOT_ABLE_TO_LOAD = "Unable to load data.";
+	
 
 }

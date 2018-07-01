@@ -1,6 +1,9 @@
+package Entities;
 
 
 import java.io.Serializable;
+
+import Abstract.Person;
 /**
 * Client holds information about name, address, and phone number.
 * A unique id is generated and balance is set to 0. 
@@ -8,7 +11,6 @@ import java.io.Serializable;
 * 
 * @author Udo, Ricky
 */
-@SuppressWarnings("serial")
 public class Client extends Person implements Serializable
 {
 	private double balance;
@@ -41,23 +43,6 @@ public class Client extends Person implements Serializable
 		this.balance = balance;
 	}
 
-	/**
-	 * Add to client's balance
-	 * @param revenue the amount of money earned
-	 */
-	public void addBalance(double revenue)
-	{
-		balance += revenue;
-	}
-
-	/**
-	 * Pay to client with the balance stored
-	 * @param paid amount to pay to client
-	 */
-	public void payClient(double paid)
-	{
-		balance -= paid;
-	}
     public String toString()
     {
 		return "id:" + uniqueID + ", name:" + name + ", address:" + address + 

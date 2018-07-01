@@ -1,12 +1,20 @@
+package Theater;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Theater
+import Collections.CardsCollection;
+import Collections.ClientCollection;
+import Collections.CustomersCollection;
+import Collections.ShowsCollection;
+
+public class Theater implements Serializable
 {
 	private ClientCollection clients;
 	private ShowsCollection shows;
 	private CardsCollection cards;
 	private CustomersCollection customers;
 	
-	Theater()
+	public Theater()
 	{
 		clients = new ClientCollection();
 		shows = new ShowsCollection();

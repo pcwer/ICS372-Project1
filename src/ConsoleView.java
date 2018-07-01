@@ -1,5 +1,20 @@
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.Map.Entry;
+import Collections.ClientCollection;
+import Collections.CustomersCollection;
+import Entities.Client;
+import Entities.CreditCard;
+import Entities.Customer;
+import Entities.Show;
+import Enums.Command;
+import Theater.Theater;
+import Utils.InputUtils;
+import Utils.Serializer;
+import Utils.Strings;
 
 /**
  * This class utilizes a Singleton pattern and is the entry point for program startup. Once instantiated, the class 
@@ -9,11 +24,12 @@ import java.util.GregorianCalendar;
  * @author Udo, Ricky
  * 
  */
-public class ConsoleView
+public class ConsoleView implements Serializable
 {
 	private static ConsoleView console;
-	private static Theater controller = new Theater();
-	private InputUtils inputUtil = new InputUtils();
+	private Theater controller;
+	private InputUtils inputUtil;
+	private Serializer serializer;
 
 	/**
 	 * Initializes the Singleton Class and prompts the user to use previous data 
@@ -23,11 +39,13 @@ public class ConsoleView
 	private ConsoleView()
 	{
 		controller = new Theater();
+		inputUtil = new InputUtils();
+		serializer = new Serializer();
 		
 		if(inputUtil.promptYesOrNo(Strings.PROMPT_LOAD_DATA))
 		{
 			System.out.println(Strings.NOTIFY_RETRIEVING_DATA);
-			//controller.retrieveData();
+			controller = retrieveData();
 		}
 	}
 
@@ -48,7 +66,7 @@ public class ConsoleView
 	private void guiHomePage()
 	{
 		Command cmd = Command.HELP; //Enumerated program commands
-		help(); //Displays menu options
+		help();
 		
 		while((cmd = inputUtil.getCommand()) != Command.EXIT_APPLICATION)
 		{
@@ -83,9 +101,9 @@ public class ConsoleView
 				case HELP:					help();
 											break;
 				default:					System.out.printf(Strings.PROMPT_SELECT_CORRECT_OPTION, cmd);
-											help();
 											break;
 			}
+			help();
 		}
 		System.out.printf(Strings.NOTIFY_CLOSING_APPLICATION, cmd);
 	}
@@ -93,9 +111,24 @@ public class ConsoleView
 	/**
 	 * 
 	 */
-	private void retrieveData()
+	private Theater retrieveData()
 	{
+		if(Serializer.isPreviousTheaterDataAvailable())
+		{
+			System.out.printf(Strings.NOTIFY_DATA_LOADING);
+			Theater theater = serializer.deserializeTheater();
+			if(theater != null)
+			{
+				return theater;
+			}	
+		}
+		else
+		{
+			System.out.printf(Strings.ERROR_NO_DATA_TO_RETRIEVE);
+		}
 		
+		System.out.println(Strings.ERROR_DATA_NOT_ABLE_TO_LOAD);
+		return new Theater();
 	}
 	
 	/**
@@ -103,7 +136,7 @@ public class ConsoleView
 	 */
 	private void storeData()
 	{
-		
+		serializer.serializeTheater(controller);
 	}
 	
 	/**
@@ -111,7 +144,18 @@ public class ConsoleView
 	 */
 	private void listAllShows()
 	{
+		Map<Long, ArrayList<Show>> map = controller.getShows().getShowsHashmap();
+		ArrayList<Show> arrList;
 		
+		for (Entry<Long, ArrayList<Show>> entry : map.entrySet())
+		{
+			arrList = entry.getValue();
+			for(int i = 0; i < arrList.size(); ++i)
+			{
+				System.out.println(arrList.get(i).toString());
+				//System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+			}
+		}
 	}
 	
 	/**
@@ -131,7 +175,7 @@ public class ConsoleView
 		Show show = new Show(showName, begin, end);
 		
 		controller.getShows().add(id, show);
-		System.out.println(controller.getShows().getClientShow(id, showName).getName() + "successfully added");
+		System.out.println(show.toString());
 	}
 	
 	/**
@@ -139,7 +183,30 @@ public class ConsoleView
 	 */
 	private void listAllCustomers()
 	{
+		CustomersCollection clients = controller.getCustomers();
+		Map<Long, Customer> map = clients.getCustomersHashMap();
 		
+		for (Entry<Long, Customer> entry : map.entrySet())
+		{
+			System.out.println(/*"Key = " + entry.getKey() + ", Value = " + */entry.getValue().toString());
+			System.out.println("Credit Cards: ");
+			listAllCreditCards(entry.getValue().getID());
+		}
+	}
+	
+	/*
+	 * 			LEFT OFF HERE
+	 */
+	private void listAllCreditCards(Long customerId)
+	{
+		Map<Long, ArrayList<CreditCard>> map = controller.getCards().getCardsHashMap();
+		ArrayList<CreditCard> arrList = map.get(customerId);
+		
+		for(int i = 0; i < arrList.size(); ++i)
+		{
+			System.out.println(arrList.get(i));
+		}
+		System.out.println();
 	}
 	
 	/**
@@ -155,6 +222,19 @@ public class ConsoleView
 	 */
 	private void addCreditCard()
 	{
+		Long customerId;
+		String cardNumber;
+		int[] expirationDate;
+		
+		customerId = inputUtil.getLongInput();
+		cardNumber = inputUtil.getStringInput();
+		expirationDate = inputUtil.getDateInput(inputUtil.getStringInput());
+		Calendar expDate = new GregorianCalendar(expirationDate[0], expirationDate[1], expirationDate[2]);
+		
+		CreditCard card = new CreditCard(cardNumber, expDate);
+		controller.getCards().add(customerId, card);
+		
+		System.out.println("Card added successfully");
 		
 	}
 	
@@ -171,7 +251,27 @@ public class ConsoleView
 	 */
 	private void addCustomer()
 	{
+		String name;
+		String address;
+		String phoneNumber;
+		String cardNumber;
+		int[] expirationDate;
 		
+		System.out.println("Please enter a name, an address, a phone number, a credit card number, and it's expiration date");
+		name = inputUtil.getStringInput();
+		address = inputUtil.getStringInput();
+		phoneNumber = inputUtil.getPhoneNumberInput();
+		cardNumber = inputUtil.getStringInput();
+		expirationDate = inputUtil.getDateInput(inputUtil.getStringInput());
+		Calendar expDate = new GregorianCalendar(expirationDate[0], expirationDate[1], expirationDate[2]);
+		
+		Customer customer = new Customer(name, address, phoneNumber);
+		CreditCard card = new CreditCard(cardNumber, expDate);
+		
+		controller.getCustomers().add(customer);
+		controller.getCards().add(customer, card);
+		
+		System.out.println("Card and customer added successfully");
 	}
 	
 	/**
@@ -179,7 +279,13 @@ public class ConsoleView
 	 */
 	private void listAllClients()
 	{
+		ClientCollection clients = controller.getClients();
+		Map<Long, Client> map = clients.getClientsHashMap();
 		
+		for (Entry<Long, Client> entry : map.entrySet())
+		{
+			System.out.println(/*"Key = " + entry.getKey() + ", Value = " + */entry.getValue().toString());
+		}
 	}
 	
 	/**
@@ -187,7 +293,12 @@ public class ConsoleView
 	 */
 	private void removeClient()
 	{
+		Long clientID = inputUtil.getLongInput();
 		
+		Client client = controller.getClients().get(clientID);
+		
+		//See if any upcoming shows in showlist
+		//if no shows remove(client) else system.out error
 	}
 	
 	/**
@@ -222,7 +333,7 @@ public class ConsoleView
 	 */
 	private void exitApplication()
 	{
-		
+		serializer.serializeTheater(controller);
 	}
 
 	/**
