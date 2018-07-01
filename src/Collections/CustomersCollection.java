@@ -28,8 +28,9 @@ public class CustomersCollection implements Serializable
 	{
 		return customers;
 	}
-	
-	
-	
-	
+
+	public void remove(Long customerID)
+	{
+		customers.remove(customerID);
+	}
 }

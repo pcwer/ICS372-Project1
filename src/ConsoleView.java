@@ -194,9 +194,6 @@ public class ConsoleView implements Serializable
 		}
 	}
 	
-	/*
-	 * 			LEFT OFF HERE
-	 */
 	private void listAllCreditCards(Long customerId)
 	{
 		Map<Long, ArrayList<CreditCard>> map = controller.getCards().getCardsHashMap();
@@ -214,6 +211,28 @@ public class ConsoleView implements Serializable
 	 */
 	private void removeCreditCard()
 	{
+		String cardNumber;
+		
+		cardNumber = inputUtil.getStringInput();
+		
+		Map<Long, ArrayList<CreditCard>> map = controller.getCards().getCardsHashMap();
+		ArrayList<CreditCard> arrList;
+		
+		for (Entry<Long, ArrayList<CreditCard>> entry : map.entrySet())
+		{
+			arrList = entry.getValue();
+			for(int i = 0; i < arrList.size(); ++i)
+			{
+				if(arrList.get(i).getCardNumber() == cardNumber);
+				{
+					arrList.remove(i);
+					System.out.println(cardNumber + " removed.");
+				}
+
+				//System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+			}
+		}
+		
 		
 	}
 	
@@ -243,7 +262,12 @@ public class ConsoleView implements Serializable
 	 */
 	private void removeCustomer()
 	{
+		Long customerID;
 		
+		customerID = inputUtil.getLongInput();
+		
+		controller.getCards().getCardsHashMap().remove(customerID);
+		controller.getCustomers().remove(customerID);
 	}
 	
 	/**
