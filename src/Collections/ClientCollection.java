@@ -29,4 +29,9 @@ public class ClientCollection implements Serializable
 	{
 		return clients;
 	}
+	
+	public void remove(Client client)
+	{
+		clients.remove(client.getID());
+	}
 }

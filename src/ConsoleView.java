@@ -228,12 +228,9 @@ public class ConsoleView implements Serializable
 					arrList.remove(i);
 					System.out.println(cardNumber + " removed.");
 				}
-
 				//System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 			}
-		}
-		
-		
+		}		
 	}
 	
 	/**
@@ -253,8 +250,7 @@ public class ConsoleView implements Serializable
 		CreditCard card = new CreditCard(cardNumber, expDate);
 		controller.getCards().add(customerId, card);
 		
-		System.out.println("Card added successfully");
-		
+		System.out.println("Card added successfully");	
 	}
 	
 	/**
@@ -262,9 +258,7 @@ public class ConsoleView implements Serializable
 	 */
 	private void removeCustomer()
 	{
-		Long customerID;
-		
-		customerID = inputUtil.getLongInput();
+		Long customerID = inputUtil.getLongInput();
 		
 		controller.getCards().getCardsHashMap().remove(customerID);
 		controller.getCustomers().remove(customerID);
@@ -275,18 +269,15 @@ public class ConsoleView implements Serializable
 	 */
 	private void addCustomer()
 	{
-		String name;
-		String address;
-		String phoneNumber;
-		String cardNumber;
-		int[] expirationDate;
-		
 		System.out.println("Please enter a name, an address, a phone number, a credit card number, and it's expiration date");
-		name = inputUtil.getStringInput();
-		address = inputUtil.getStringInput();
-		phoneNumber = inputUtil.getPhoneNumberInput();
-		cardNumber = inputUtil.getStringInput();
-		expirationDate = inputUtil.getDateInput(inputUtil.getStringInput());
+
+		String name = inputUtil.getStringInput();
+		String address = inputUtil.getStringInput();
+		String phoneNumber = inputUtil.getPhoneNumberInput();
+		String cardNumber = inputUtil.getStringInput();
+		int[] expirationDate = inputUtil.getDateInput(inputUtil.getStringInput());
+		
+		//Move into inputUtils
 		Calendar expDate = new GregorianCalendar(expirationDate[0], expirationDate[1], expirationDate[2]);
 		
 		Customer customer = new Customer(name, address, phoneNumber);
@@ -320,6 +311,20 @@ public class ConsoleView implements Serializable
 		Long clientID = inputUtil.getLongInput();
 		
 		Client client = controller.getClients().get(clientID);
+		
+		boolean showsInPast = controller.getShows().isEveryShowListingInClientsPast(client.getID());
+		
+		//Clients are removed but all of their shows stay in the system.
+		if(showsInPast)
+		{
+			controller.getClients().remove(client);
+			System.out.println("Client removed from system.");
+		}
+		else
+		{
+			System.out.println("Client has future shows, client not deleted.");
+		}
+		
 		
 		//See if any upcoming shows in showlist
 		//if no shows remove(client) else system.out error
