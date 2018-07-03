@@ -5,7 +5,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import Entities.CreditCard;
 import Entities.Show;
 import Utils.DateUtils;
 
@@ -91,32 +93,40 @@ public class ShowsCollection implements Serializable
 	 * @param endDate end date
 	 * @return true if overlap, false if no overlap
 	 */
-	public boolean isShowOverlappingOtherShows(Long key, Calendar begDate, Calendar endDate) //returns true if show overlaps other shows
+	public boolean isShowOverlappingOtherShows(Calendar begDate, Calendar endDate) //returns true if show overlaps other shows
 	{
-		ArrayList<Show> arrList = shows.get(key);
+		//ArrayList<Show> arrList = shows.get(key);
 		
-		for(int i = 0; i < arrList.size(); ++i)
+		ArrayList<Show> arrList;
+		
+		for(Entry<Long, ArrayList<Show>> entry : shows.entrySet())
 		{
-			if(begDate.getTimeInMillis() > arrList.get(i).getBeginDate().getTimeInMillis())
+			arrList = entry.getValue();
+			
+			for(int i = 0; i < arrList.size(); ++i)
 			{
-				if(begDate.getTimeInMillis() < arrList.get(i).getEndDate().getTimeInMillis())
+				if(begDate.getTimeInMillis() > arrList.get(i).getBeginDate().getTimeInMillis())
 				{
+					if(begDate.getTimeInMillis() < arrList.get(i).getEndDate().getTimeInMillis())
+					{
+						return true;
+					}
+				}
+				if(begDate.getTimeInMillis() < arrList.get(i).getBeginDate().getTimeInMillis())
+				{
+					if(endDate.getTimeInMillis() > arrList.get(i).getBeginDate().getTimeInMillis())
+					{
+						return true;
+					}
+				}
+				if(begDate.getTimeInMillis() == arrList.get(i).getBeginDate().getTimeInMillis())
+				{
+					System.out.println("Loop3");
 					return true;
 				}
-			}
-			if(begDate.getTimeInMillis() < arrList.get(i).getBeginDate().getTimeInMillis())
-			{
-				if(endDate.getTimeInMillis() > arrList.get(i).getBeginDate().getTimeInMillis())
-				{
-					return true;
-				}
-			}
-			if(begDate.getTimeInMillis() == arrList.get(i).getBeginDate().getTimeInMillis())
-			{
-				return true;
 			}
 		}
-		return false;
+		return false;	
 	}
 
 	/*

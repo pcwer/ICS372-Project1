@@ -172,10 +172,21 @@ public class ConsoleView implements Serializable
 		Calendar begin = new GregorianCalendar(beginDate[0], beginDate[1], beginDate[2]);
 		Calendar end = new GregorianCalendar(endDate[0], endDate[1], endDate[2]);
 	
-		Show show = new Show(showName, begin, end);
+		//Begin date should start at beginning of day
+		//End date should end at 11:59pm
+		//Loop is 1 day off.
 		
-		controller.getShows().add(id, show);
-		System.out.println(show.toString());
+		if(controller.getShows().isShowOverlappingOtherShows(begin, end))
+		{
+			System.out.println("Show overlaps another. Cannot add to listing.");
+		}
+		else
+		{
+			Show show = new Show(showName, begin, end);
+		
+			controller.getShows().add(id, show);
+			System.out.println(show.toString());
+		}
 	}
 	
 	/**
@@ -211,26 +222,34 @@ public class ConsoleView implements Serializable
 	 */
 	private void removeCreditCard()
 	{
-		String cardNumber;
-		
-		cardNumber = inputUtil.getStringInput();
+		String cardNumber = inputUtil.getStringInput();
 		
 		Map<Long, ArrayList<CreditCard>> map = controller.getCards().getCardsHashMap();
 		ArrayList<CreditCard> arrList;
 		
-		for (Entry<Long, ArrayList<CreditCard>> entry : map.entrySet())
+		for(Entry<Long, ArrayList<CreditCard>> entry : map.entrySet())
 		{
 			arrList = entry.getValue();
+			
 			for(int i = 0; i < arrList.size(); ++i)
 			{
-				if(arrList.get(i).getCardNumber() == cardNumber);
+				if(arrList.get(i).getCardNumber().equals(cardNumber))
 				{
-					arrList.remove(i);
-					System.out.println(cardNumber + " removed.");
+					if(arrList.size() > 1)
+					{
+						arrList.remove(i);
+						System.out.println(cardNumber + " removed.");
+					}
+					else
+					{
+						System.out.println("Only one card, cannot remove.");
+						return;
+					}
 				}
 				//System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 			}
-		}		
+		}	
+		System.out.println("Card not found");
 	}
 	
 	/**
@@ -238,13 +257,9 @@ public class ConsoleView implements Serializable
 	 */
 	private void addCreditCard()
 	{
-		Long customerId;
-		String cardNumber;
-		int[] expirationDate;
-		
-		customerId = inputUtil.getLongInput();
-		cardNumber = inputUtil.getStringInput();
-		expirationDate = inputUtil.getDateInput(inputUtil.getStringInput());
+		Long customerId = inputUtil.getLongInput();
+		String cardNumber = inputUtil.getStringInput();
+		int[] expirationDate = inputUtil.getDateInput(inputUtil.getStringInput());
 		Calendar expDate = new GregorianCalendar(expirationDate[0], expirationDate[1], expirationDate[2]);
 		
 		CreditCard card = new CreditCard(cardNumber, expDate);
@@ -324,8 +339,6 @@ public class ConsoleView implements Serializable
 		{
 			System.out.println("Client has future shows, client not deleted.");
 		}
-		
-		
 		//See if any upcoming shows in showlist
 		//if no shows remove(client) else system.out error
 	}
@@ -335,26 +348,17 @@ public class ConsoleView implements Serializable
 	 */
 	private void addClient()
 	{
-		String name;
-		String address;
-		String phoneNumber;
-		
 		System.out.println("Please enter the Client's name, address, and phone number.");
 		
-		name = inputUtil.getStringInput();
-		address = inputUtil.getStringInput();
-		phoneNumber = inputUtil.getPhoneNumberInput();
-		
-		System.out.println("Name = " + name);
-		System.out.println("Address = " + address);
-		System.out.println("PhoneNumber = " + phoneNumber);
+		String name = inputUtil.getStringInput();
+		String address = inputUtil.getStringInput();
+		String phoneNumber = inputUtil.getPhoneNumberInput();
 
 		//Add a confirmation eventually.
 		
 		Client client = new Client(name, address, phoneNumber);
 		controller.getClients().add(client);
-		System.out.println("Successfully added client: " + controller.getClients().get(client.getID()).getName()
-					+ "With id of" + client.getID());
+		System.out.println("Successfully added client: " + controller.getClients().get(client.getID()).getName() + " With id of: " + client.getID());
 	}
 	
 	/**

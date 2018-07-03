@@ -55,9 +55,4 @@ public class CardsCollection implements Serializable
 		}
 		return false;
 	}
-	
-
-
-
-
 }
