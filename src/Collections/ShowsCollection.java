@@ -107,13 +107,14 @@ public class ShowsCollection implements Serializable
 			{
 				if(begDate.getTimeInMillis() > arrList.get(i).getBeginDate().getTimeInMillis())
 				{
-					if(begDate.getTimeInMillis() < arrList.get(i).getEndDate().getTimeInMillis())
+					if(begDate.getTimeInMillis() <= arrList.get(i).getEndDate().getTimeInMillis())
 					{
 						return true;
 					}
 				}
 				if(begDate.getTimeInMillis() < arrList.get(i).getBeginDate().getTimeInMillis())
 				{
+					System.out.println("loop2");
 					if(endDate.getTimeInMillis() > arrList.get(i).getBeginDate().getTimeInMillis())
 					{
 						return true;
@@ -121,7 +122,6 @@ public class ShowsCollection implements Serializable
 				}
 				if(begDate.getTimeInMillis() == arrList.get(i).getBeginDate().getTimeInMillis())
 				{
-					System.out.println("Loop3");
 					return true;
 				}
 			}

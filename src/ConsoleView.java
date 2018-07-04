@@ -169,8 +169,8 @@ public class ConsoleView implements Serializable
 		int[] beginDate = inputUtil.getDateInput(inputUtil.getStringInput());
 		int[] endDate = inputUtil.getDateInput(inputUtil.getStringInput());
 	
-		Calendar begin = new GregorianCalendar(beginDate[0], beginDate[1], beginDate[2]);
-		Calendar end = new GregorianCalendar(endDate[0], endDate[1], endDate[2]);
+		Calendar begin = new GregorianCalendar(beginDate[0], beginDate[1], beginDate[2], 0, 0, 0);
+		Calendar end = new GregorianCalendar(endDate[0], endDate[1], endDate[2], 23, 59, 59);
 	
 		//Begin date should start at beginning of day
 		//End date should end at 11:59pm
