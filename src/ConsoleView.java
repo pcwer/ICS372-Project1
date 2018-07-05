@@ -68,8 +68,10 @@ public class ConsoleView implements Serializable
 		Command cmd = Command.HELP; //Enumerated program commands
 		help();
 		
+		//Main running loop for the program
 		while((cmd = inputUtil.getCommand()) != Command.EXIT_APPLICATION)
 		{
+			help();
 			switch(cmd)
 			{
 				case EXIT_APPLICATION:		exitApplication();
@@ -103,18 +105,24 @@ public class ConsoleView implements Serializable
 				default:					System.out.printf(Strings.PROMPT_SELECT_CORRECT_OPTION, cmd);
 											break;
 			}
-			help();
 		}
 		System.out.printf(Strings.NOTIFY_CLOSING_APPLICATION, cmd);
 	}
 
 	/**
+	 * Check if previous data is available. If not, display an error. If it is, attempt 
+	 * to deserialize it. If the deserializing failed then display an error and return 
+	 * a new Theater. 
 	 * 
+	 * @return Theater - Either a loaded or new Theater object must be returned from here
 	 */
 	private Theater retrieveData()
 	{
-		if(Serializer.isPreviousTheaterDataAvailable())
+		boolean previousDataAvailable = Serializer.isPreviousTheaterDataAvailable();
+		
+		if(previousDataAvailable)
 		{
+			//If a file exists then return it otherwise display an error - data not loaded
 			System.out.printf(Strings.NOTIFY_DATA_LOADING);
 			Theater theater = serializer.deserializeTheater();
 			if(theater != null)
@@ -126,12 +134,12 @@ public class ConsoleView implements Serializable
 		{
 			System.out.printf(Strings.ERROR_NO_DATA_TO_RETRIEVE);
 		}
-		
 		System.out.println(Strings.ERROR_DATA_NOT_ABLE_TO_LOAD);
 		return new Theater();
 	}
 	
 	/**
+	 * Calls the Serializer to store this object's Theater to disk
 	 * 
 	 */
 	private void storeData()
@@ -146,14 +154,22 @@ public class ConsoleView implements Serializable
 	{
 		Map<Long, ArrayList<Show>> map = controller.getShows().getShowsHashmap();
 		ArrayList<Show> arrList;
-		
+
+		/*
+		 * Get the value per the iterated key. Should be an array 
+		 * list of Shows. Then iterate over these shows and print 
+		 * them to screen.
+		 */
+		System.out.println(Strings.NOTIFY_LISTING_ALL_SHOWS);	
 		for (Entry<Long, ArrayList<Show>> entry : map.entrySet())
 		{
+			//Gets the ArrayList of Shows
 			arrList = entry.getValue();
+			
+			//Iterates over all of the Shows, printing name, beginDate, endDate.
 			for(int i = 0; i < arrList.size(); ++i)
 			{
 				System.out.println(arrList.get(i).toString());
-				//System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 			}
 		}
 	}
@@ -164,17 +180,13 @@ public class ConsoleView implements Serializable
 	private void addShow()
 	{
 		System.out.println("Please provide the client id, the show name, and the begin and end dates.");
-		Long id = inputUtil.getLongInput();
-		String showName = inputUtil.getStringInput();
-		int[] beginDate = inputUtil.getDateInput(inputUtil.getStringInput());
-		int[] endDate = inputUtil.getDateInput(inputUtil.getStringInput());
+		Long id = inputUtil.getLongInput(Strings.PROMPT_CLIENT_ID);
+		String showName = inputUtil.getStringInput(Strings.PROMPT_SHOW_NAME);
+		int[] beginDate = inputUtil.getDateInput(inputUtil.getStringInput(Strings.PROMPT_BEGIN_DATE));
+		int[] endDate = inputUtil.getDateInput(inputUtil.getStringInput(Strings.PROMPT_END_DATE));
 	
 		Calendar begin = new GregorianCalendar(beginDate[0], beginDate[1], beginDate[2], 0, 0, 0);
 		Calendar end = new GregorianCalendar(endDate[0], endDate[1], endDate[2], 23, 59, 59);
-	
-		//Begin date should start at beginning of day
-		//End date should end at 11:59pm
-		//Loop is 1 day off.
 		
 		if(controller.getShows().isShowOverlappingOtherShows(begin, end))
 		{
@@ -222,7 +234,7 @@ public class ConsoleView implements Serializable
 	 */
 	private void removeCreditCard()
 	{
-		String cardNumber = inputUtil.getStringInput();
+		String cardNumber = inputUtil.getStringInput(Strings.PROMPT_CREDIT_CARD_NUMBER);
 		
 		Map<Long, ArrayList<CreditCard>> map = controller.getCards().getCardsHashMap();
 		ArrayList<CreditCard> arrList;
@@ -257,9 +269,9 @@ public class ConsoleView implements Serializable
 	 */
 	private void addCreditCard()
 	{
-		Long customerId = inputUtil.getLongInput();
-		String cardNumber = inputUtil.getStringInput();
-		int[] expirationDate = inputUtil.getDateInput(inputUtil.getStringInput());
+		Long customerId = inputUtil.getLongInput(Strings.PROMPT_CUSTOMER_ID);
+		String cardNumber = inputUtil.getStringInput(Strings.PROMPT_CREDIT_CARD_NUMBER);
+		int[] expirationDate = inputUtil.getDateInput(inputUtil.getStringInput(Strings.PROMPT_CREDIT_CARD_EXPIRATION_DATE));
 		Calendar expDate = new GregorianCalendar(expirationDate[0], expirationDate[1], expirationDate[2]);
 		
 		CreditCard card = new CreditCard(cardNumber, expDate);
@@ -273,7 +285,7 @@ public class ConsoleView implements Serializable
 	 */
 	private void removeCustomer()
 	{
-		Long customerID = inputUtil.getLongInput();
+		Long customerID = inputUtil.getLongInput(Strings.PROMPT_CUSTOMER_ID);
 		
 		controller.getCards().getCardsHashMap().remove(customerID);
 		controller.getCustomers().remove(customerID);
@@ -286,11 +298,11 @@ public class ConsoleView implements Serializable
 	{
 		System.out.println("Please enter a name, an address, a phone number, a credit card number, and it's expiration date");
 
-		String name = inputUtil.getStringInput();
-		String address = inputUtil.getStringInput();
-		String phoneNumber = inputUtil.getPhoneNumberInput();
-		String cardNumber = inputUtil.getStringInput();
-		int[] expirationDate = inputUtil.getDateInput(inputUtil.getStringInput());
+		String name = inputUtil.getStringInput(Strings.PROMPT_CUSTOMER_NAME);
+		String address = inputUtil.getStringInput(Strings.PROMPT_ADDRESS);
+		String phoneNumber = inputUtil.getPhoneNumberInput(Strings.PROMPT_PHONE_NUMBER);
+		String cardNumber = inputUtil.getStringInput(Strings.PROMPT_CREDIT_CARD_NUMBER);
+		int[] expirationDate = inputUtil.getDateInput(inputUtil.getStringInput(Strings.PROMPT_CREDIT_CARD_EXPIRATION_DATE));
 		
 		//Move into inputUtils
 		Calendar expDate = new GregorianCalendar(expirationDate[0], expirationDate[1], expirationDate[2]);
@@ -323,7 +335,7 @@ public class ConsoleView implements Serializable
 	 */
 	private void removeClient()
 	{
-		Long clientID = inputUtil.getLongInput();
+		Long clientID = inputUtil.getLongInput(Strings.PROMPT_CLIENT_ID);
 		
 		Client client = controller.getClients().get(clientID);
 		
@@ -350,9 +362,9 @@ public class ConsoleView implements Serializable
 	{
 		System.out.println("Please enter the Client's name, address, and phone number.");
 		
-		String name = inputUtil.getStringInput();
-		String address = inputUtil.getStringInput();
-		String phoneNumber = inputUtil.getPhoneNumberInput();
+		String name = inputUtil.getStringInput(Strings.PROMPT_CLIENT_NAME);
+		String address = inputUtil.getStringInput(Strings.PROMPT_ADDRESS);
+		String phoneNumber = inputUtil.getPhoneNumberInput(Strings.PROMPT_PHONE_NUMBER);
 
 		//Add a confirmation eventually.
 		

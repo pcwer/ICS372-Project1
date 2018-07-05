@@ -23,10 +23,18 @@ public class InputUtils
 	 * Returns the user input as an int
 	 * @return user int selection if no exceptions, -1 if there is bad input
 	 */
-	public int intInput() throws NumberFormatException
+	public int intInput()
 	{
-		String input = scanner.nextLine();
-		return Integer.parseInt(input);
+		try
+		{
+			String input = scanner.nextLine();
+			return Integer.parseInt(input);
+		}
+		catch(NumberFormatException nfe)
+		{
+			return Integer.parseInt("-1");
+		}
+
 	}
 
 	/**
@@ -64,18 +72,17 @@ public class InputUtils
 			date[0] = Integer.parseInt(parsedDate[0]);
 			date[1] = Integer.parseInt(parsedDate[1]) - 1; //-1 for month-1
 			date[2] = Integer.parseInt(parsedDate[2]);
+			return date;
 		}
 		else
 		{
 			return null;
-		}
-		
-		return date;
-		
+		}		
 	}
 
 	/**
 	 * Retrieves long input from user
+	 * @param promptClientId 
 	 * @return long input, or -1 if there is an exception
 	 */
 	/*
@@ -85,8 +92,9 @@ public class InputUtils
 		return Long.parseLong(input);
 	}
 	*/
-	public Long getLongInput() throws NumberFormatException
+	public Long getLongInput(String promptClientId) throws NumberFormatException
 	{
+		System.out.println(promptClientId);
 		String input = scanner.nextLine();
 		return new Long(input);
 	}
@@ -133,21 +141,24 @@ public class InputUtils
 			case "N":	return false;
 			case "no":	return false;
 			case "NO":	return false;
-			default:	System.out.println(Strings.NOTIFY_BAD_USER_INPUT_FOR_LOAD_DATA);	
+			default:	System.out.println(Strings.ERROR_BAD_USER_INPUT_FOR_LOAD_DATA);	
 						return false;
 		}
 	}
 
 	/**
-	 * Rtrives string input and ensures there is a valid input
+	 * Retrives string input and ensures there is a valid input
+	 * @param promptShowName 
 	 * @return the string input
 	 * 
 	 */
-	public String getStringInput()
+	public String getStringInput(String promptShowName)
 	{
+		System.out.println(promptShowName);
+		
 		String input = scanner.nextLine();
-
-		if (input.length() == 0) {
+		if (input.length() == 0)
+		{
 			return null;
 		}
 		return input;
@@ -156,11 +167,13 @@ public class InputUtils
 	/**
 	 * Ensures phone number input is 10 digits long and numbers only.
 	 * Removes any dashes if added.
+	 * @param promptPhoneNumber 
 	 * @return input if valid or null if not
 	 * 
 	 */
-	public String getPhoneNumberInput()
+	public String getPhoneNumberInput(String promptPhoneNumber)
 	{
+		System.out.println(promptPhoneNumber);
 		String input = scanner.nextLine();
 		
 		input = input.replace("-", ""); //Remove -
@@ -219,5 +232,5 @@ public class InputUtils
 			default:	return Command.BAD_COMMAND; //Catch-all for bad command input such as String or double.
 		}
 	}
-
 }
+
